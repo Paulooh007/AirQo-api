@@ -13,10 +13,11 @@ from google.cloud import bigquery
 import msgpack
 import msgpack_numpy as mnp
 mnp.patch()
-
-from redis import Redis
+import redis
 
 client = bigquery.Client()
+pool = redis.ConnectionPool(host='34.69.63.24', port=6379, db=0)
+r = redis.Redis(connection_pool=pool)
 
 def get_static_channels():
     sql = """
@@ -119,9 +120,6 @@ def main():
     model = train_model(Xtraining, Ytraining)
     predmeans,predvars,Xtest = get_preds(model)
     
-    # Needs setting up properly!
-    r = Redis(host='localhost', port=6379, db=0)
-
     means_pack = mnp.packb(predmeans.numpy())
     vars_pack = mnp.packb(predvars.numpy())
     Xtest_pack = mnp.packb(Xtest)
