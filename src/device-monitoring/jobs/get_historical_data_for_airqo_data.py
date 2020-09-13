@@ -1,6 +1,23 @@
 import pandas as pd
 from helpers import db_helpers
 
+def get_agg_channel_data(channel_id,entire_dataset,freq='1H'):
+  '''
+  Get Hourly Aggregates using Mean of the Data for specified channel.
+  '''
+
+  channel_data = entire_dataset[entire_dataset['channel_id'] == channel_id]
+  channel_data = channel_data.sort_values(by = 'time')[['time', 's1_pm2_5', 's1_pm10', 's2_pm2_5','s2_pm10', 'battery_voltage']]
+  channel_data['s1_s2_average_pm2_5'] = channel_data[['s1_pm2_5', 's2_pm2_5']].mean(axis=1).round(2)
+  channel_data['s1_s2_average_pm10'] = channel_data[['s1_pm10', 's2_pm10']].mean(axis=1).round(2)
+
+  time_indexed_channel_data = channel_data.set_index('time')
+  #channel_data = channel_data.interpolate('time', limit_direction='both')
+
+  channel_aggregated_data = time_indexed_channel_data.resample(freq).mean().round(2)
+  channel_aggregated_data['channel_id'] = channel_id
+
+  return channel_aggregated_data
 
 def get_hourly_channel_data(filename):
     #channel_id = 
