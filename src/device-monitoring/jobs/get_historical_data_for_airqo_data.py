@@ -42,11 +42,70 @@ def get_hourly_channel_data(filename):
         channel_id = channel['channelID']
          ## get data for each channel
         channel_hourly_data = get_hourly_aggregated_channel_data(channel_id, df)
+
+        result = get_device_name_for_specified_channel(channel_id['channelID'])
+
+        device_name = result['value']
+        device_components = get_device_components(device_name)
+
+        pms5003_components = [device_component['name'] for device_component in device_components if device_component['description']=='pms5003']
+        dht11_components = [device_component['name'] for device_component in device_components if device_component['description']=='DHT11']
+        battery_voltage_component = [device_component['name'] for device_component in device_components if device_component['description']=='Lithium Ion 18650']
+        #pms5003_components = [device_component['name'] for device_component in device_components if device_component['description']=='pms5003']
+
+        for row in channel_hourly_data.head().itertuples():
+            print(row.Index, row.date, row.delay)
+            if pms5003_components: 
+                pms_sensor_one_pm25 = pms5003_components[0]
+
+
+                for component in pms5003_components:
+                    print('------pms5003 components---')
+                    print(component)
+                    
+
+                if dht11_components:
+                    for component in dht11_components:
+                        print('------dht11 components---')
+                        print(component)
+                
+                if battery_voltage_component:
+                    for component in battery_voltage_component:
+                        print('------battery components---')
+                        print(component)
+                    ## call method that does
+            '''
+                        {
+            
+            '''
+        
+        
+
+        
         ## call a function that does the mapping
 
         ## save values for each channel to db
 
-    return 
+    return result
+
+def map_to_events_collection_format(value, raw_value, weight, frequency, calibrated_value,time, uncertainty_value,standard_deviation_value, measurement_quantity_kind, measurement_unit):
+    request_body = {
+                        "value":value, 
+                        "raw": raw_value, 
+                        "weight":weight,
+                        "frequency": frequency,
+                        "calibratedValue": calibrated_value, #need to add actual value
+                        "time": time,
+                        "uncertaintyValue":uncertainty_value, 
+                        "standardDeviationValue":standard_deviation_value,
+                        "measurement": {
+                            "quantityKind": measurement_quantity_kind,
+                            "measurementUnit": measurement_unit
+                        }           
+                    }
+
+    return request_body
+
 
 
 def map_bigquery_data_to_netmanager_events_collection(channel_data, channel_id):
@@ -55,24 +114,22 @@ def map_bigquery_data_to_netmanager_events_collection(channel_data, channel_id):
     if channel_name['value'] != 0:
         #do the mapping and call the api for saving component values
         channel_name_value = channel_name['value']
-        BASE_API_URL='http://127.0.0.1:3000/api/v1/devices/components/add/values?device='+channel_name_value
+        
+
+        
        
         ''' 
             request_body = 
-        
-        
-                api_url = '{0}{1}'.format(BASE_API_URL,'channels')
-            { "values": [
-        { "componentName": {
-                "value": 22,
-                "raw": 33,
-                "weight": 2,
-                "frequency": "hourly"
-                }
-        }
-        ], "timestamp":"2020-09-12T10:45:00.23Z"
-        }
         '''
+        
+        
+                
+
+def get_device_components(device_name):
+    db = connect_mongo()
+    result_list = list(db.components.find({'deviceID': device_name},{'deviceID':1,'name':1,'description':1, 'measurement':1,'_id': 0}))
+    return   result_list
+
 
 def get_all_device_channels():
     db = connect_mongo()
@@ -82,17 +139,61 @@ def get_all_device_channels():
 
 def get_device_name_for_specified_channel(channel_id):
     db = connect_mongo()
-    result = db.devices.find(
-            {'channelID': {'$eq': channel_id}}, {'name': 1, 'channelID': 1})
-    if result['name']:
-        return {'value':result['name'], 'message':'successfuly found'}
+    result_list = list(db.devices.find({'channelID': channel_id}, {'name': 1, 'channelID': 1}))
+    if result_list:
+        result = result_list[0]
+        if result:
+            return {'value':result['name'], 'message':'successfuly found'}
+        else:
+            return {'value':0, 'message': 'name with channelid not found'}
     else:
-        return {'value':0, 'message': 'name with channelid not found'}
+            return {'value':0, 'message': 'name with channelid not found'}
 
 
 if __name__ == "__main__":
+    x = get_device_name_for_specified_channel(643676)
+    print(x)
+    #values = get_device_components(device_name)
+    
     results = get_all_device_channels()
-    for channel_id in results:
+    for channel_id in results[0:3]:
         print(channel_id)
         print('----------')
+        result = get_device_name_for_specified_channel(channel_id['channelID'])
+        print('--device name -----')
+        print(result)
+        device_name = result['value']
+        device_components = get_device_components(device_name)
+        print(device_components)
+
+        pms5003_components = [device_component['name'] for device_component in device_components if device_component['description']=='pms5003']
+        dht11_components = [device_component['name'] for device_component in device_components if device_component['description']=='DHT11']
+        battery_voltage_component = [device_component['name'] for device_component in device_components if device_component['description']=='Lithium Ion 18650']
+        #pms5003_components = [device_component['name'] for device_component in device_components if device_component['description']=='pms5003']
+
+        if pms5003_components: 
+            for component in pms5003_components:
+                print('------pms5003 components---')
+                print(component)
+
+                ## call method that does
+
+                
+        
+        if dht11_components:
+            for component in dht11_components:
+                print('------dht11 components---')
+                print(component)
+
+        if battery_voltage_component:
+            for component in battery_voltage_component:
+                print('------battery components---')
+                print(component)
+
+
+        
+
+
+
+    
     
