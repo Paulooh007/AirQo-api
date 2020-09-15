@@ -1,11 +1,11 @@
 import pandas as pd
 from pymongo import MongoClient
+import requests
 
 #MONGO_URI = os.getenv('MONGO_URI')
 
 MONGO_URI = "mongodb://admin:airqo-250220-master@35.224.67.244:27017"
-
-from pymongo import MongoClient
+REQUEST_POST_BASE_URI_FOR_SAVING_EVENTS = 'http://localhost:3000/api/v1/devices/components/add/values?device=aq_01&component=aq_01_comp_23'
 
 def connect_mongo():
     client = MongoClient(MONGO_URI)
@@ -115,15 +115,11 @@ def map_bigquery_data_to_netmanager_events_collection(channel_data, channel_id):
         #do the mapping and call the api for saving component values
         channel_name_value = channel_name['value']
         
+        
+def save_events_data(request_body, request_uri):
+    result = requests.post(request_uri,data = request_body)
+    print(result)
 
-        
-       
-        ''' 
-            request_body = 
-        '''
-        
-        
-                
 
 def get_device_components(device_name):
     db = connect_mongo()
