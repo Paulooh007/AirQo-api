@@ -63,6 +63,7 @@ def get_hourly_channel_data(filename):
                     print('------pms5003 components---')
                     print(component)
                     
+                    
 
                 if dht11_components:
                     for component in dht11_components:
