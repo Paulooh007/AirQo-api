@@ -2,6 +2,7 @@ import pandas as pd
 from pymongo import MongoClient
 import requests
 from datetime import datetime,timedelta
+import os
 
 MONGO_URI = os.getenv('MONGO_URI')
 
