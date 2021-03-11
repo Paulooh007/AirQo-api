@@ -245,12 +245,12 @@ const device = {
       const { tenant, device, type, location, next, id } = req.query;
       logElement("the tenant", tenant);
 
-      const { activityFilter } = await queryFilterOptions(req, res);
-      logObject("activity filter", activityFilter);
+      const { filter } = await queryFilterOptions(req, res);
+      logObject("activity filter", filter);
 
       if (tenant) {
         if (!device && !type && !location && !next && !id) {
-          const locationActivities = await getModelByTenant(
+          const allActivities = await getModelByTenant(
             tenant.toLowerCase(),
             "activity",
             LocationActivitySchema
@@ -261,14 +261,14 @@ const device = {
           return res.status(HTTPStatus.OK).json({
             success: true,
             message: "Activities fetched successfully",
-            locationActivities,
+            allActivities,
           });
         } else {
           const activities = await getModelByTenant(
             tenant.toLowerCase(),
             "activity",
             LocationActivitySchema
-          ).find(activityFilter);
+          ).list({ limit, skip, filter });
 
           if (!isEmpty(activities)) {
             return res.status(HTTPStatus.OK).json({
