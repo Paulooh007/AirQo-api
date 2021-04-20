@@ -10,7 +10,7 @@ def test_str_to_date():
 
 def test_date_to_str():
     my_string = date_to_str(datetime(2020, 10, 23, 0, 30, 58))
-    assert my_string == ''
+    assert my_string == '2020-10-23T00:30:58.000000Z'
 
 def test_convert_GMT_time():
     pass 
