@@ -35,3 +35,5 @@ class Device:
 
 if __name__ == "__main__":
     dx = Device()
+    docs = dx.get_devices('airqo')
+    print(list(docs))
