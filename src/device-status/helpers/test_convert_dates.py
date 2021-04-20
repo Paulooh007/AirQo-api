@@ -68,5 +68,18 @@ def test_convert_to_date():
     mydate = convert_to_date(datetime(2020, 10, 23))
     assert mydate == '2020-10-23'
 
-if __name__=='__main__':
-    convert_GMT_time_to_EAT_local_time(datetime(2020, 10))
+def test_convert_date_on_empty_arg():
+    with pytest.raises(TypeError):
+        convert_to_date()
+
+def test_convert_date_on_incorrect_arg():
+    with pytest.raises(TypeError):
+        convert_to_date(datetime(2020, 10))
+
+def test_convert_date_on_wrong_arg_type():
+    with pytest.raises(TypeError):
+        convert_to_date('Barry Allen')
+
+def test_convert_date_on_too_many_args():
+    with pytest.raises(TypeError):
+        convert_to_date(datetime(2020, 10, 23), datetime(2020, 10, 23))
