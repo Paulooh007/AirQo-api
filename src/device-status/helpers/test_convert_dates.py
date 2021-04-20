@@ -17,10 +17,10 @@ def test_convert_GMT_time():
     assert eat_time == 'Fri, 23 Oct 2020 03:30 AM'
 
 def test_convert_to_date():
-    pass
+    mydate = convert_to_date(datetime(2020, 10, 23))
+    assert mydate == '2020-10-23'
 
 if __name__=='__main__':
-    gmt_datetime = datetime(2020, 10, 23, 0, 30, 58)
-    eat_datetime = convert_GMT_time_to_EAT_local_time(gmt_datetime)
-    print(eat_datetime)
-    print(type(eat_datetime))
+    mydate = convert_to_date(datetime(2020, 10, 23))
+    print(mydate)
+    print(type(mydate))
