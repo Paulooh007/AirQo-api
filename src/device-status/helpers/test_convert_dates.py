@@ -28,7 +28,21 @@ def test_date_to_str():
     my_string = date_to_str(datetime(2020, 10, 23, 0, 30, 58))
     assert my_string == '2020-10-23T00:30:58.000000Z'
 
-def test_date_on_emp
+def test_date_on_empty_arg():
+    with pytest.raises(TypeError):
+        date_to_str()
+
+def test_date_on_incorrect_arg():
+    with pytest.raises(TypeError):
+        date_to_str(datetime(2020, 10))
+
+def test_date_on_wrong_arg_type():
+    with pytest.raises(TypeError):
+        date_to_str('2020-10-23T00:30:58.000000Z')
+
+def test_date_on_too_many_args():
+    with pytest.raises(TypeError):
+        date_to_str(datetime(2020, 10, 23, 0, 30, 58), datetime(2020, 10, 23, 0, 30, 58))
 
 def test_convert_GMT_time():
     eat_time = convert_GMT_time_to_EAT_local_time(datetime(2020, 10, 23, 0, 30, 58)) 
@@ -39,4 +53,5 @@ def test_convert_to_date():
     assert mydate == '2020-10-23'
 
 if __name__=='__main__':
-    str_to_date('2020-10-23T00:30:58.000000Z', '2020-10-23T00:30:58.000000Z')
+    mystr=date_to_str(datetime(2020, 1))
+    print(mystr)
