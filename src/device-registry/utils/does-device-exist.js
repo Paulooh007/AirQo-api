@@ -161,10 +161,8 @@ const updateThingBodies = (req, res) => {
     upsert: true,
   };
 
-  let transformedName = tranformDeviceName(name);
-
   let tsBody = {
-    ...(!isEmpty(name) && { name: transformedName }),
+    ...(!isEmpty(name) && { name: tranformDeviceName(name) }),
     ...(!isEmpty(elevation) && { elevation: elevation }),
     ...(!isEmpty(tags) && { tags: tags }),
     ...(!isEmpty(latitude) && { latitude: latitude }),
